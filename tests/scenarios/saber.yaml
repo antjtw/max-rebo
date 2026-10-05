@@ -1,0 +1,9 @@
+name: James ignites, GM narrates Kael retracting
+players: [ant, james]
+steps:
+  - { as: james, say: 'Right, I ignite my lightsaber' }
+  - expect: { sfx: 'SFX/Sabers/Kael - Crossguard Ignite.wav', within_ms: 300 }
+  - { as: ant, say: 'Kael deactivates his saber and steps back' }
+  - expect: { sfx: 'SFX/Sabers/Kael - Crossguard Retract.wav' }
+  - { as: james, say: "I don't ignite my lightsaber yet" }
+  - expect: { no_sfx: true }

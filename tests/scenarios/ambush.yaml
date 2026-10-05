@@ -1,0 +1,13 @@
+name: Ambush suggests combat, a full rest brings calm back
+players: [ant, james]
+mode: suggest
+start_scene: calm
+steps:
+  - { as: ant, say: 'Suddenly, blaster fire. It is an ambush!' }
+  - { as: ant, say: 'Weapons out, combat begins.' }
+  - expect: { suggestion: combat }
+  - { accept: true }
+  - expect: { scene: combat }
+  - { as: james, say: 'I fire my blaster at the nearest trooper' }
+  - expect: { sfx_trigger: blaster-fire }
+  - { as: ant, say: 'Alright, the fight is over.' }
