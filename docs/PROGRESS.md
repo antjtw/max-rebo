@@ -36,12 +36,14 @@ Legend: [x] done · [~] done in code, needs verification on the Mac / in Discord
 
 ## P3: Library and tagging
 
-- [ ] Scanner, watcher, hashing, metadata, kind heuristics
-- [ ] Analysis jobs and gain offsets
-- [ ] SQLite schema/migrations, backup/export/import
-- [ ] Enrichment providers and Claude Code tagging pass
-- [ ] Library screen, review workflow, Library health
-- [ ] Scenes driven by tag queries
+- [x] Scanner (xxhash content identity, music-metadata, folder names), chokidar watcher, move detection, kind heuristics
+- [x] Analysis: ebur128 loudness/true peak → gain offsets applied in the mixer; energy, waveform, silence/intro skip, onsets, tempo, loopability, vocals likelihood
+- [x] SQLite schema and versioned migrations (DB copied to data/backups first); `library:export`/`library:import`; backup at the end of every session
+- [x] Providers: heuristics (on), Claude Code tagging pass (`tags:export` → proposals → `tags:import`, see docs/TAGGING.md), AcoustID/MusicBrainz (`tags:acoustid`, opt-in), Ollama (`tags:ollama`, opt-in)
+- [x] Provenance: user always wins, rejections remembered, implicit feedback weights
+- [x] Library screen with review workflow, bulk confirm, inline tag editing, waveform, preview; Library health view
+- [x] Scenes draw music by tag queries with fallbacks and gap reporting
+- [ ] Ant's library scanned and analysed on the Mac; Claude Code tagging pass over every file; Ant reviews
 
 ## P4: Ears
 

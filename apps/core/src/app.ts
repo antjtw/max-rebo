@@ -107,7 +107,13 @@ export class Cantina implements CommandActions {
     const dir = dataDir(opts.env);
     this.repo = new LibraryRepo(
       openDatabase(opts.dbFile ?? path.join(dir, 'cantina.db'), {
-        backup: () => this.log.info('migrating database: backup written first'),
+        // A copy of the database is written before every migration (SPEC §8.7).
+        backup: (file, from) => {
+          const dest = path.join(dir, 'backups', `cantina-v${from}-${Date.now()}.db`);
+          fs.mkdirSync(path.dirname(dest), { recursive: true });
+          fs.copyFileSync(file, dest);
+          this.log.info({ dest }, 'database backed up before migration');
+        },
       }),
     );
 
