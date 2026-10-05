@@ -47,36 +47,42 @@ Legend: [x] done · [~] done in code, needs verification on the Mac / in Discord
 
 ## P4: Ears
 
-- [ ] Ears service: protocol, Vosk, Whisper, Silero VAD, heartbeat
-- [ ] Core routing, opt-outs, `/listen`, announcement, nickname
-- [ ] Transcript panel, speaking blips
-- [ ] Local mic adapter
-- [ ] Simulator (UI + CLI), fixtures
-- [ ] Custom vocabulary
+- [x] Python ears service: binary protocol, VAD segmenter (Silero, energy fallback), Vosk grammar engine, Whisper (mlx / whisper.cpp), heartbeat; tested with fake engines
+- [x] Core: supervisor with restart and heartbeat watchdog (DEGRADED meanwhile), 48→16 kHz resampler, opt-outs enforced before audio leaves the adapter, `/listen`, announcement, nickname indicator
+- [x] Transcript panel (memory only, rolling 5 min), speaking blips
+- [x] Local microphone adapter (avfoundation on macOS)
+- [x] Simulator (UI screen and `npm run sim`); `npm run fixtures` (macOS `say`)
+- [x] Custom vocabulary → Vosk grammar and Whisper prompt
+- [ ] Real recognition on the Mac with models installed; latency on fixtures (needs the Mac)
 
 ## P5: Triggers
 
-- [ ] Trigger engine per §9
-- [ ] Text-channel triggers
-- [ ] Triggers and Players screens, phrase tester
-- [ ] Scope callouts, latency in the event log
+- [x] Trigger engine per §9 (patterns, fuzzy + phonetic, negation, questions, cooldowns, partial/final dedupe, subject resolution, per-player overrides, state and loops, self-hear guard)
+- [x] Text-channel triggers
+- [x] Triggers and Players screens with the live phrase tester
+- [x] Scope callouts; latency in the event log
+- [x] §16.2 scenario tests pass (`tests/scenarios/*.yaml`)
+- [ ] Two-person Discord test (MANUAL-TESTS.md)
 
 ## P6: Scenes and game hooks
 
-- [ ] Scene scorer, modes, lock, suggestions, undo
-- [ ] Selection with feedback weights
-- [ ] Stings
-- [ ] MTFBWY hooks, Game panel, dice bot parsing
-- [ ] Optional Ollama classifier
+- [x] Scene scorer (decay, hysteresis, dwell, priority break-in, manual-only), modes, lock, suggestions, undo in Auto
+- [x] Selection with feedback weights, recency, fallbacks, library gaps
+- [x] Stings (on the SFX layer, ducking music by 10 dB)
+- [x] MTFBWY hooks and Game panel; dice bot parsing (off until a bot is named, Q9)
+- [ ] Optional Ollama scene classifier (MAY, off by default): not built; the hook is in place via `nudgeScene`
+- [ ] Test session in Discord
 
 ## P7: Hardening and polish
 
-- [ ] launchd service, caffeinate, graceful shutdown
-- [ ] Robustness table (§14)
-- [ ] 4-hour soak
-- [ ] LAN/iPad mode with PIN
-- [ ] README, screenshots, MANUAL-TESTS.md
+- [x] launchd service (`npm run service:install`), caffeinate while in voice, graceful shutdown with backup
+- [x] Robustness table (§14): reconnect backoff, DAVE 4017 message, ears restart, bad files skipped and marked, missing roots rechecked, invalid config refused with line numbers, rejoin after crash if the GM is still there
+- [x] Accelerated soak (`npm run soak -- --hours 4`; a 20-minute version runs in `npm test`)
+- [x] LAN/iPad mode with PIN and session cookie (tested)
+- [x] Network allowlist test (§11.3)
+- [x] README, screenshots (docs/screenshots), MANUAL-TESTS.md
+- [ ] Real 3-hour session (Ant)
 
 ## Blocked / waiting on Ant
 
-See `docs/HUMAN-TASKS.md`. Nothing is blocked yet.
+See `docs/HUMAN-TASKS.md`. All code phases are built; what remains needs the Mac, Discord, the real library or real voices.

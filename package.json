@@ -34,7 +34,8 @@
     "format": "prettier --write .",
     "typecheck": "tsc -p packages/shared --noEmit && tsc -p apps/core --noEmit && tsc -p apps/dashboard --noEmit",
     "tags:ollama": "tsx apps/core/src/library/cli.ts tags-ollama",
-    "tags:acoustid": "tsx apps/core/src/library/cli.ts tags-acoustid"
+    "tags:acoustid": "tsx apps/core/src/library/cli.ts tags-acoustid",
+    "soak": "node --expose-gc --import tsx tests/soak.ts"
   },
   "devDependencies": {
     "@axe-core/playwright": "^4.13.0",

@@ -21,6 +21,7 @@ import type { CommandActions } from './adapters/discord/commands.ts';
 import { isGm as isGmCheck } from './adapters/discord/presence.ts';
 import { Downsampler48to16 } from './adapters/ears/resample.ts';
 import { EarsSupervisor } from './adapters/ears/supervisor.ts';
+import { LocalMic, MIC_USER_ID } from './adapters/local-mic.ts';
 import { TranscriptBuffer } from './adapters/ears/transcripts.ts';
 import { EventBus } from './bus/bus.ts';
 import { ConfigStore, type ConfigValues } from './config/store.ts';
@@ -82,6 +83,7 @@ export class Cantina implements CommandActions {
   discord: DiscordAdapter | null = null;
   ears: EarsSupervisor | null = null;
   private localSpeakers: LocalSpeakersSink | null = null;
+  private mic: LocalMic | null = null;
   private readonly startedAt = Date.now();
   private health = new Map<HealthComponent, { status: HealthStatus; message: string }>();
   private speaking = new Set<string>();
@@ -192,7 +194,8 @@ export class Cantina implements CommandActions {
     this.timers.push(setInterval(() => this.checkRoots(), s.library.recheckS * 1000));
     void this.rescan();
     if (this.opts.watchLibrary !== false) this.watchLibrary();
-    if (this.opts.ears !== false && s.ears.enabled && s.inputs.discordVoice) this.startEars();
+    if (this.opts.ears !== false && s.ears.enabled && (s.inputs.discordVoice || s.inputs.localMic))
+      this.startEars();
     else
       this.setHealth('ears', 'degraded', 'Speech recognition off: manual and text triggers only');
     if (this.opts.discord !== false) await this.startDiscord();
@@ -223,6 +226,10 @@ export class Cantina implements CommandActions {
       onUserAudio: (userId, pcm) => this.onUserAudio(userId, pcm),
       onUserAudioEnd: (userId) => this.ears?.endUtterance(userId),
       onTextMessage: (m) => void this.onTextMessage(m),
+      lastChannel: {
+        get: () => this.getSetting<string | null>('lastVoiceChannel', null),
+        set: (id) => this.setSetting('lastVoiceChannel', id),
+      },
       beforeLeave: async () => {
         this.mixer.panic(1);
         await new Promise((r) => setTimeout(r, 1100));
@@ -250,6 +257,18 @@ export class Cantina implements CommandActions {
       configure: () => this.earsConfig(),
     });
     this.ears.start();
+    if (s.inputs.localMic) {
+      // In-person table: one microphone, no speaker identity (SPEC §7.1).
+      this.mic = new LocalMic(
+        (pcm) => {
+          if (this.listening && !this.excluded.has(MIC_USER_ID))
+            this.ears?.sendAudio(MIC_USER_ID, pcm);
+        },
+        this.log,
+        (message) => this.bus.emit('log.error', { source: 'mic', message }),
+      );
+      this.mic.start();
+    }
   }
 
   earsConfig(): { grammar: string[]; initialPrompt: string } {
@@ -292,6 +311,7 @@ export class Cantina implements CommandActions {
     this.timers = [];
     await this.discord?.leave(false).catch(() => undefined);
     await this.discord?.destroy().catch(() => undefined);
+    this.mic?.stop();
     this.ears?.stop();
     this.clock.stop();
     this.localSpeakers?.close();
@@ -305,6 +325,19 @@ export class Cantina implements CommandActions {
       this.log.warn({ err: (err as Error).message }, 'backup failed');
     }
     this.repo.db.close();
+  }
+
+  /** Small runtime state kept in SQLite (not user config). */
+  getSetting<T>(key: string, fallback: T): T {
+    const r = this.repo.db.prepare('SELECT value FROM settings WHERE key = ?').get(key) as
+      { value: string } | undefined;
+    return r ? (JSON.parse(r.value) as T) : fallback;
+  }
+
+  setSetting(key: string, value: unknown): void {
+    this.repo.db
+      .prepare('INSERT OR REPLACE INTO settings(key, value) VALUES (?, ?)')
+      .run(key, JSON.stringify(value));
   }
 
   get settings(): ConfigValues['settings'] {

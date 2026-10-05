@@ -52,6 +52,8 @@ export interface DiscordAdapterOptions {
   }) => void;
   /** Fade out before an automatic leave. */
   beforeLeave?: () => Promise<void>;
+  /** Channel the bot was in before a restart (SPEC §14: rejoin if the GM is still there). */
+  lastChannel?: { get: () => string | null; set: (id: string | null) => void };
 }
 
 /**
@@ -213,6 +215,22 @@ export class DiscordAdapter {
     return this.guild?.voiceStates.cache.get(userId)?.channelId ?? null;
   }
 
+  private rejoinAfterRestart(): void {
+    const last = this.o.lastChannel?.get();
+    if (!last || !this.guild) return;
+    const gmIds = [
+      this.o.settings().discord.gmUserId,
+      ...this.o.settings().discord.gmUserIds,
+    ].filter(Boolean);
+    const gmThere = [...this.guild.voiceStates.cache.values()].some(
+      (vs) => vs.channelId === last && gmIds.includes(vs.id),
+    );
+    if (gmThere) {
+      this.o.log.info({ channelId: last }, 'rejoining the channel from before the restart');
+      void this.join(last).catch(() => undefined);
+    }
+  }
+
   private evaluatePresence(): void {
     if (!this.guild || this.destroyed) return;
     const s = this.o.settings().discord;
@@ -310,6 +328,7 @@ export class DiscordAdapter {
       if (this.connection !== connection) return;
       if (next.status === VoiceConnectionStatus.Ready) {
         this.reconnectAttempt = 0;
+        this.o.lastChannel?.set(channelId);
         this.setState('ready');
         this.attachReceiver(connection);
       } else if (next.status === VoiceConnectionStatus.Disconnected) {
@@ -468,6 +487,7 @@ export class DiscordAdapter {
   /** Leave voice. A manual leave suppresses auto-join until the GM changes channel. */
   async leave(manual = true): Promise<void> {
     if (manual) this.manuallyLeftChannelId = this.channelId;
+    if (!this.destroyed) this.o.lastChannel?.set(null);
     if (this.leaveTimer) clearTimeout(this.leaveTimer);
     this.leaveTimer = null;
     this.teardownConnection();
