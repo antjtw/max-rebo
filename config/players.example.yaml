@@ -1,0 +1,19 @@
+# Copy to config/players.yaml (gitignored: it holds Discord user IDs) and fill in.
+# sfx: per-player overrides keyed by trigger id; `<trigger>.loop` overrides the trigger's loop.
+# Paths are relative to a library root.
+
+players:
+  - id: ant
+    discordUserId: '000000000000000000' # [HUMAN]
+    displayName: Ant
+    role: gm
+
+  - id: james
+    discordUserId: '000000000000000000' # [HUMAN]
+    displayName: James
+    character: Kael Voss # example (Q21)
+    aliases: [Kael, Voss]
+    sfx:
+      saber-ignite: 'SFX/Sabers/Kael - Crossguard Ignite.wav'
+      saber-retract: 'SFX/Sabers/Kael - Crossguard Retract.wav'
+      saber-ignite.loop: 'SFX/Sabers/Kael - Crossguard Hum.wav'

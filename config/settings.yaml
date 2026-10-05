@@ -1,0 +1,102 @@
+# Cantina non-secret settings. Secrets live in .env. Schema: packages/shared/src/config.ts
+# Unset values fall back to the defaults in the schema (SPEC §20 defaults).
+
+discord:
+  # [HUMAN] Your Discord user ID (Developer Mode → right-click yourself → Copy User ID).
+  gmUserId: ''
+  # Optional: a role whose members count as GM, and/or extra GM user IDs.
+  gmRoleId: ''
+  gmUserIds: []
+  # [HUMAN] Text channel for the "Cantina is listening" announcement.
+  announceChannelId: ''
+  # Channels whose messages run through the trigger engine (Q17: same channel by default).
+  textTriggerChannelIds: []
+  autoJoin: true # follow the GM into voice (Q16)
+  autoLeaveAfterS: 60 # leave when no humans remain for this long (Q24)
+  nicknameIndicator: true
+  sfxCommand: everyone # players may fire their own and generic SFX (Q10)
+  diceBot:
+    enabled: false # Q9: off until a dice bot is named
+    userId: ''
+
+automation:
+  mode: suggest # manual | suggest | auto (Q12)
+  locked: false
+
+mixer:
+  master: 80
+  layers:
+    music: 70
+    ambience: 60
+    sfx: 80
+  defaultCrossfadeS: 3
+  ducking:
+    enabled: true # Q13
+    depthDb: -6
+    attackMs: 150
+    releaseMs: 800
+    sfxDuck: true
+    sfxDuckDb: -4
+  limiter:
+    ceilingDb: -1
+    lookaheadMs: 5
+  loudness:
+    musicLufs: -18
+    ambienceLufs: -24
+    sfxPeakDb: -3
+
+ears:
+  enabled: true
+  retentionMinutes: 5 # Q14: memory only, never on disk. 0 = process and drop.
+  voskModel: vosk-model-small-en-us-0.15
+  whisperModel: small.en
+  silenceMs: 800
+  heartbeatTimeoutS: 5
+
+triggers:
+  minConfidence: 0.6
+  fuzziness: 0.2
+  cooldownS: 4
+  selfHearGuardMs: 300 # Q4
+
+scenes:
+  halfLifeS: 30
+  threshold: 6
+  hysteresis: 3
+  gmWeight: 1.5
+  suggestionTtlS: 20
+  autoUndoS: 10
+
+selection:
+  recencyMinutes: 45
+  noRepeatCount: 5
+  allowLyricsInAuto: false # Q11
+  skipPenaltyWithinS: 15
+
+inputs:
+  discordVoice: true
+  discordText: true
+  localMic: false
+
+outputs:
+  discord: true
+  localSpeakers: false
+
+ui:
+  crt: true
+  scanlines: true
+  flicker: true
+  bloom: true
+  simulator: false
+
+lan:
+  enabled: false # Q7
+
+library:
+  recheckS: 60
+
+enrichment:
+  acoustid: false # Q15
+  ollama: false
+  ollamaModel: llama3.1:8b
+  ollamaSceneClassifier: false

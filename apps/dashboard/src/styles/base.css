@@ -1,0 +1,34 @@
+*,
+*::before,
+*::after {
+  box-sizing: border-box;
+}
+html,
+body,
+#root {
+  height: 100%;
+  margin: 0;
+}
+body {
+  background: var(--bg);
+  color: var(--line);
+  font-family: var(--font-mono);
+  font-size: 13px;
+  -webkit-font-smoothing: antialiased;
+}
+.boot {
+  display: grid;
+  place-content: center;
+  height: 100%;
+  text-align: center;
+  font-family: var(--font-display);
+  letter-spacing: 0.12em;
+}
+.boot h1 {
+  margin: 0;
+  font-weight: 600;
+}
+.boot p {
+  color: var(--signal);
+  font-size: 12px;
+}

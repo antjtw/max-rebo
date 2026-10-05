@@ -1,0 +1,38 @@
+# Game hooks: MTFBWY preset (SPEC §9.6).
+# Terms: the Focus (never "spotlight"), Despair, Balance, Dyad dice (2d12: a Balance die and a
+# Despair die). MTFBWY has no initiative, so combat cues are phrases like "combat begins".
+
+system: mtfbwy
+
+despair:
+  spendPerStep: 2 # one intensity step per 2 Despair spent...
+  windowMinutes: 5 # ...within the last 5 minutes
+  maxSteps: 2 # capped
+  interruptCost: 3 # GM spends 3 Despair to interrupt a Hero → ominous sting
+
+stings:
+  despairInterrupt: { kind: sting, tags: [ominous] }
+  majorCrit: { kind: sting, tags: [triumph] } # double 12
+  majorCritFail: { kind: sting, tags: [doom] } # double 1
+  minorCrit: { kind: sting, tags: [positive] } # doubles 2–11
+  minorCritRateLimitS: 60
+
+focus:
+  gmSwellInCombat: true # brief ambience swell when the GM takes the Focus during combat
+
+concludedScene: calm
+
+phrases:
+  - phrases: ['[the] gm takes the focus', 'i take the focus', 'enemy turn']
+    event: focus.gm
+  - phrases: ['[the] focus (returns|goes back) to the heroes', 'back to you', 'your turn']
+    event: focus.heroes
+  - phrases: ['i spend {number} despair', 'spending {number} despair', '{number} despair']
+    event: despair.spend
+  - phrases: ['i spend a despair', 'spend one despair']
+    event: despair.spend_one
+  - phrases: ['combat begins', 'weapons out', 'ambush']
+    event: scene.nudge
+    nudgeScene: { combat: 5 }
+  - phrases: ['the scene (is over|concludes|ends)', 'we take a full rest', 'full rest']
+    event: scene.concluded

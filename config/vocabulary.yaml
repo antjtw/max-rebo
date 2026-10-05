@@ -1,0 +1,38 @@
+# Custom vocabulary for speech recognition (SPEC §7.3, Q8).
+# Whisper gets these in its initial prompt; Vosk gets them in its grammar.
+# [HUMAN] Add your characters, ships and places.
+
+terms:
+  - lightsaber
+  - blaster
+  - hyperspace
+  - hyperdrive
+  - thermal detonator
+  - droid
+  - astromech
+  - stormtrooper
+  - Jedi
+  - Sith
+  - the Force
+  - Empire
+  - Rebellion
+  - bounty hunter
+  - credits
+  - cantina
+  - speeder
+  - starfighter
+  - Despair
+  - Focus
+  - Balance
+  - Dyad dice
+  - Hero
+  - GM
+
+places:
+  - Tatooine
+  - Coruscant
+  - Outer Rim
+  - Core Worlds
+
+characters:
+  - Kael Voss

@@ -1,0 +1,65 @@
+# Tag taxonomy (SPEC §8.6). Add values freely; the dashboard and tagging pass read this file.
+kind: [music, ambience, sfx, sting]
+scenes:
+  [
+    calm,
+    exploration,
+    travel,
+    hyperspace,
+    cantina,
+    social,
+    mystery,
+    stealth,
+    tension,
+    chase,
+    combat,
+    boss,
+    dark-side,
+    force,
+    sorrow,
+    triumph,
+    horror,
+    montage,
+  ]
+moods:
+  [
+    heroic,
+    ominous,
+    melancholy,
+    playful,
+    mysterious,
+    triumphant,
+    tense,
+    serene,
+    urgent,
+    eerie,
+    romantic,
+    grim,
+  ]
+settings:
+  [space, ship-interior, desert, jungle, ice, swamp, city, underworld, temple, ruins, forest, ocean]
+factions: [empire, rebels, jedi, sith, smugglers, bounty-hunters, locals, droids]
+vocals: [none, choir, lyrics]
+category:
+  [
+    saber,
+    blaster,
+    weapon,
+    explosion,
+    impact,
+    door,
+    ship,
+    engine,
+    droid,
+    creature,
+    crowd,
+    computer,
+    force,
+    magic,
+    footsteps,
+    nature,
+    ui,
+  ]
+phase: [ignite, hum, swing, clash, retract, fire, reload, open, close, start, stop, loop, one-shot]
+# Free-form tags used by stings and SFX queries
+tags: [hyperspace, triumph, doom, ominous, positive, reveal]

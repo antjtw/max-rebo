@@ -1,0 +1,104 @@
+# Scenes (SPEC §10.1). Every scene is selectable manually; manualOnly scenes are never auto-selected.
+# music/ambience are tag queries over the library. Until the library is tagged (P3), a scene can
+# list explicit files under `tracks:` (paths relative to a library root).
+# Order here is the 1–9 keyboard order in the dashboard.
+
+scenes:
+  - id: calm
+    label: Calm
+    music: { scenes: [calm], intensity: [1, 2], vocals: [none] }
+    ambience: { auto: true }
+    crossfadeS: 6
+    minDwellS: 120
+    priority: 10
+    entry:
+      keywords: { 'we rest': 4, 'take a break': 3, 'camp': 2, 'full rest': 5, 'short rest': 3 }
+
+  - id: exploration
+    label: Exploration
+    music: { scenes: [exploration, travel], intensity: [1, 3], vocals: [none] }
+    ambience: { auto: true }
+    crossfadeS: 5
+    minDwellS: 120
+    priority: 20
+    entry:
+      keywords: { 'we explore': 3, 'look around': 2, 'head out': 3, 'set off': 3, 'search the': 1 }
+
+  - id: social
+    label: Social
+    music: { scenes: [social, cantina], intensity: [1, 2] }
+    ambience: { auto: true }
+    crossfadeS: 5
+    minDwellS: 90
+    priority: 20
+    entry:
+      keywords: { 'cantina': 3, 'have a drink': 3, 'negotiate': 3, 'talk to': 1, 'bartender': 2 }
+
+  - id: tension
+    label: Tension
+    music: { scenes: [tension, stealth, mystery], intensity: [2, 3] }
+    crossfadeS: 4
+    minDwellS: 90
+    priority: 40
+    entry:
+      keywords:
+        { "something's wrong": 3, 'we hear': 2, 'footsteps': 2, 'sneak': 2, 'trap': 3, 'quiet': 1 }
+
+  - id: hyperspace
+    label: Hyperspace
+    music: { scenes: [hyperspace, travel], intensity: [2, 4], vocals: [none] }
+    crossfadeS: 3
+    minDwellS: 60
+    priority: 50
+    fallback: calm
+    entry:
+      keywords: { 'jump to hyperspace': 6, 'punch it': 5, 'make the jump': 5, 'hyperdrive': 3 }
+
+  - id: chase
+    label: Chase
+    music: { scenes: [chase], intensity: [3, 5], vocals: [none] }
+    crossfadeS: 2
+    minDwellS: 60
+    priority: 70
+    fallback: tension
+    entry:
+      keywords:
+        { 'run': 2, 'chase': 4, 'after them': 3, 'speeder': 2, 'pursuit': 4, 'lose them': 3 }
+
+  - id: combat
+    label: Combat
+    music: { scenes: [combat], intensity: [3, 5], vocals: [none] }
+    crossfadeS: 1.5
+    minDwellS: 90
+    priority: 80
+    entry:
+      keywords:
+        {
+          'ambush': 5,
+          'attack': 2,
+          'open fire': 4,
+          'weapons out': 4,
+          'combat begins': 6,
+          'blaster': 1,
+          'draw my': 1,
+        }
+      events: [trigger.blaster-fire, trigger.saber-ignite]
+    exit:
+      keywords: { "they're all down": 5, 'the fight is over': 5, 'we won': 3 }
+      fallback: tension
+
+  - id: sorrow
+    label: Sorrow
+    music: { scenes: [sorrow], intensity: [1, 2], vocals: [none, choir] }
+    crossfadeS: 6
+    minDwellS: 120
+    priority: 30
+    manualOnly: true
+
+  - id: boss
+    label: Boss
+    music: { scenes: [boss, dark-side], intensity: [4, 5] }
+    crossfadeS: 1
+    minDwellS: 180
+    priority: 90
+    manualOnly: true # never chosen automatically

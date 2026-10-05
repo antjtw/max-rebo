@@ -1,0 +1,43 @@
+# dependencies
+node_modules/
+.venv/
+__pycache__/
+*.pyc
+.pytest_cache/
+.ruff_cache/
+
+# build output
+dist/
+coverage/
+playwright-report/
+test-results/
+*.tsbuildinfo
+
+# secrets and personal config (SPEC §11.1, §17.6)
+.env
+.env.*
+!.env.example
+config/players.yaml
+
+# runtime data: database, models, logs, backups, debug captures
+data/*
+!data/.gitkeep
+
+# audio files never go in the repo (SPEC D2). Test fixtures are generated, not committed.
+*.wav
+*.mp3
+*.flac
+*.ogg
+*.m4a
+*.aac
+*.aif
+*.aiff
+*.opus
+*.mov
+!docs/style/reference.mov
+
+# OS / editor
+.DS_Store
+.idea/
+.vscode/*
+!.vscode/extensions.json

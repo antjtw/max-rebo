@@ -1,0 +1,49 @@
+{
+  "name": "cantina",
+  "private": true,
+  "version": "0.1.0",
+  "description": "Private, local-first, context-aware music and SFX bot for Discord tabletop sessions, with a live DJ console.",
+  "type": "module",
+  "engines": {
+    "node": ">=22.12.0"
+  },
+  "workspaces": [
+    "packages/*",
+    "apps/*"
+  ],
+  "scripts": {
+    "setup": "node scripts/setup.mjs",
+    "doctor": "tsx apps/core/src/doctor.ts",
+    "dev": "node scripts/dev.mjs",
+    "start": "npm run build -w @cantina/dashboard && tsx apps/core/src/main.ts",
+    "commands:register": "tsx apps/core/src/adapters/discord/register-commands.ts",
+    "sim": "tsx apps/core/src/sim-cli.ts",
+    "fixtures": "bash scripts/make-fixtures.sh",
+    "library:scan": "tsx apps/core/src/library/cli.ts scan",
+    "library:analyse": "tsx apps/core/src/library/cli.ts analyse",
+    "library:export": "tsx apps/core/src/library/cli.ts export",
+    "library:import": "tsx apps/core/src/library/cli.ts import",
+    "tags:export": "tsx apps/core/src/library/cli.ts tags-export",
+    "tags:import": "tsx apps/core/src/library/cli.ts tags-import",
+    "service:install": "bash scripts/service.sh install",
+    "service:uninstall": "bash scripts/service.sh uninstall",
+    "test": "vitest run",
+    "test:watch": "vitest",
+    "test:e2e": "playwright test",
+    "lint": "eslint . && prettier --check .",
+    "format": "prettier --write .",
+    "typecheck": "tsc -p packages/shared --noEmit && tsc -p apps/core --noEmit && tsc -p apps/dashboard --noEmit"
+  },
+  "devDependencies": {
+    "@eslint/js": "^10.0.1",
+    "@types/node": "^22.20.5",
+    "eslint": "^10.12.0",
+    "eslint-plugin-react-hooks": "^7.1.1",
+    "globals": "^17.13.0",
+    "prettier": "^3.9.9",
+    "tsx": "^4.23.15",
+    "typescript": "^6.0.3",
+    "typescript-eslint": "^8.71.0",
+    "vitest": "^5.0.3"
+  }
+}

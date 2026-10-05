@@ -1,0 +1,86 @@
+# Triggers (SPEC §9). Phrase syntax:
+#   (a|b|c)   alternatives          [word]  optional word(s)       [a|b]  optional alternatives
+#   {character} a character name or alias from players.yaml   {player} a player display name
+#   {number}  a number (words are converted to digits first)
+# Phrases are matched after normalisation (lower case, no punctuation, contractions expanded,
+# synonyms applied), with fuzzy and phonetic tolerance.
+# `sound` is a file path relative to a library root, or a tag query such as
+# { category: saber, phase: ignite }. Per-player overrides live in players.yaml.
+
+# Synonyms are applied before matching: every variant is rewritten to the key.
+synonyms:
+  lightsaber: ['light saber', 'lightsabre', 'light sabre', 'sabre', 'saber', 'lights abre']
+  blaster: ['blasters', 'blast her']
+  hyperspace: ['hyper space']
+  hyperdrive: ['hyper drive']
+
+triggers:
+  - id: saber-ignite
+    label: Saber ignite
+    phrases:
+      - '[i] (ignite|activate|draw|light) [up] my lightsaber'
+      - '{character} (ignites|activates|draws) (his|her|their) lightsaber'
+    subject: auto
+    sound: { category: saber, phase: ignite }
+    setsState: { '{subject}.saber': 'on' }
+    loop:
+      sound: { category: saber, phase: hum }
+      layer: sfx
+      gainDb: -14
+      while: '{subject}.saber == on'
+      maxSeconds: 120
+    cooldownS: 4
+    minConfidence: 0.6
+    alsoNudgeScene: { combat: 2 }
+
+  - id: saber-retract
+    label: Saber retract
+    phrases:
+      - '[i] (deactivate|retract|extinguish|sheathe|turn off|put away) my lightsaber'
+      - '{character} (deactivates|retracts|sheathes|extinguishes) (his|her|their) lightsaber'
+    subject: auto
+    requiresState: { '{subject}.saber': 'on' }
+    sound: { category: saber, phase: retract }
+    setsState: { '{subject}.saber': 'off' }
+    cooldownS: 2
+
+  - id: blaster-fire
+    label: Blaster fire
+    phrases:
+      - '[i] (fire|shoot) [my|the|a] blaster'
+      - '{character} (fires|shoots)'
+      - '(i|we) open fire'
+    sound: { category: blaster, phase: fire }
+    cooldownS: 1.5
+    alsoNudgeScene: { combat: 2 }
+
+  - id: hyperspace-jump
+    label: Hyperspace jump
+    phrases:
+      - 'punch it'
+      - 'jump to hyperspace'
+      - 'make the jump'
+      - 'engage [the] hyperdrive'
+    subject: none
+    sound: { category: ship, phase: start, tags: [hyperspace] }
+    alsoNudgeScene: { hyperspace: 6 }
+    cooldownS: 10
+
+  - id: door-open
+    label: Door open
+    phrases:
+      - '[the] (blast door|door|hatch) (opens|slides open|hisses open)'
+      - '[i] open the (blast door|door|hatch)'
+    subject: none
+    sound: { category: door, phase: open }
+    cooldownS: 3
+
+  - id: explosion
+    label: Explosion
+    phrases:
+      - '(it|the ship|the reactor|the charge|the grenade|everything) (explodes|blows up|detonates)'
+      - '[i] (throw|toss) a (grenade|thermal detonator)'
+    subject: none
+    sound: { category: explosion }
+    cooldownS: 3
+    alsoNudgeScene: { combat: 3 }
