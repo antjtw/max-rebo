@@ -4,7 +4,7 @@ import path from 'node:path';
 import fastifyStatic from '@fastify/static';
 import fastifyWebsocket from '@fastify/websocket';
 import Fastify, { type FastifyInstance, type FastifyReply, type FastifyRequest } from 'fastify';
-import { ZodError, type z } from 'zod';
+import { z, ZodError } from 'zod';
 import {
   BulkConfirmRequest,
   ConfigName,
@@ -30,12 +30,14 @@ import {
   SimSayRequest,
   StopRequest,
   TestPhraseRequest,
+  TrackQuerySchema,
   VoiceJoinRequest,
   type WsServerMessage,
 } from '@cantina/shared';
 import type { Cantina } from '../app.ts';
 import { ConfigValidationError } from '../config/store.ts';
 import { runDoctor } from '../doctor.ts';
+import { matches } from '../engine/selection.ts';
 import { analyseLibrary } from '../library/analyse.ts';
 import { DASHBOARD_DIST } from '../paths.ts';
 
@@ -334,6 +336,15 @@ export async function createServer(
     return { ok: true, value };
   });
 
+  server.post('/api/scenes/preview', async (req) => {
+    const { query } = parse(z.object({ query: TrackQuerySchema }), req.body);
+    const allowLyrics = app.settings.selection.allowLyricsInAuto;
+    const n = app.repo
+      .candidates(query, ['music'])
+      .filter((c) => matches(c, query, { allowLyrics, tensionStep: 0 }) != null).length;
+    return { count: n };
+  });
+
   /* ----------------------------- simulator ----------------------------- */
   server.post('/api/sim/say', async (req) => {
     const b = parse(SimSayRequest, req.body);
@@ -370,7 +381,7 @@ export async function createServer(
 
   /* ------------------------------ dashboard ------------------------------ */
   if (opts.serveDashboard !== false && fs.existsSync(DASHBOARD_DIST)) {
-    await server.register(fastifyStatic, { root: DASHBOARD_DIST, wildcard: false });
+    await server.register(fastifyStatic, { root: DASHBOARD_DIST });
     server.setNotFoundHandler((req, reply) => {
       if (req.url.startsWith('/api') || req.url.startsWith('/ws'))
         return reply.code(404).send({ error: 'Not found' });

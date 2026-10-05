@@ -54,3 +54,34 @@ Format: date · decision · reason · alternatives considered.
 - **Decision:** Use `opusscript` (WASM/JS) for Opus encoding and decoding. `@discordjs/opus` is not installed.
 - **Reason:** `@discordjs/opus`'s installer (`@discordjs/node-pre-gyp`) depends on `tar@6`, which has critical advisories with no fix in that range. Opus for one 48 kHz stereo output plus a handful of speakers is well within opusscript's budget on Apple Silicon.
 - **Alternatives:** Install `@discordjs/opus` manually for lower CPU if profiling shows a need; `prism-media` picks it up automatically.
+
+## D-010 · 2026-10-05 · `/listen all on|off` instead of `/listen on|off`
+
+- **Decision:** The global switch is `/listen all on|off`; the personal opt-out stays `/listen me on|off`.
+- **Reason:** Discord does not allow a command to mix subcommands with plain options, so `/listen on` and `/listen me on` cannot coexist on one command.
+- **Alternatives:** Two commands (`/listen` and `/optout`); rejected as less discoverable.
+
+## D-011 · 2026-10-05 · Audio analysis in TypeScript, not librosa
+
+- **Decision:** Tempo, onset density, loopability and the vocals heuristic are computed in core (FFT over a 16 kHz mono decode) rather than in a librosa batch job in the ears environment. Loudness and true peak still come from FFmpeg `ebur128`.
+- **Reason:** One fewer cross-process job; the features are coarse heuristics that feed review, not ground truth, so librosa's extra accuracy isn't needed. The `analysis` extra stays available if a better classifier is wanted later.
+
+## D-012 · 2026-10-05 · A scene without `ambience` keeps the current beds
+
+- **Decision:** Only scenes that declare `ambience` change the ambience layer. Others leave beds playing.
+- **Reason:** Switching from Calm to Combat shouldn't stop the rain on the hull. Scenes that want silence can declare `ambience: { tracks: [] }`.
+
+## D-013 · 2026-10-05 · Secondary text token `--line-mid`
+
+- **Decision:** Added `--line-mid: #a3a3a9` for informational secondary text (≈ 7.5:1 on the panel colour). `--line-dim` is kept for borders and decoration, as §12.3 intends.
+- **Reason:** The axe scan flagged 12 px `--line-dim` text (≈ 3.5:1) as failing AA; §12.3 requires informational text to pass AA.
+
+## D-014 · 2026-10-05 · Voice join control lives in the header
+
+- **Decision:** The dashboard's Join control (§5.2) is a compact dropdown in the header next to the health lamps rather than a panel.
+- **Reason:** At 1440 × 900 a separate panel pushed scenes 8 and 9 out of view. The Voice lamp already shows connection state.
+
+## D-015 · 2026-10-05 · Self-hear guard also applies after manual SFX
+
+- **Decision:** For 300 ms after any SFX plays (trigger, soundboard or `/sfx`), speech triggers are ignored (Q4).
+- **Reason:** Bleed from a manually fired sound is as likely to be mis-recognised as bleed from a triggered one.

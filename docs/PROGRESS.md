@@ -16,20 +16,23 @@ Legend: [x] done · [~] done in code, needs verification on the Mac / in Discord
 
 ## P1: Voice out, mixer, DAVE spike
 
-- [ ] Discord login; `/join`, `/leave`, `/panic`, `/status`; command registration
-- [ ] Three-layer mixer: crossfades, ducking, limiter
-- [ ] Local speakers output
-- [ ] Play a file into music; SFX over it
-- [ ] DAVE receive spike: per-user RMS → `voice.level`, live levels page
-- [ ] Auto-join / auto-leave
+- [~] Discord login; all slash commands (§5.3); guild command registration (`npm run commands:register`)
+- [x] Three-layer mixer: equal-power crossfades, ducking, lookahead limiter (unit-tested: never exceeds −1 dBFS)
+- [~] Local speakers output (ffplay / AudioToolbox sink; needs a listen on the Mac)
+- [x] Play a file into music; SFX over it without interruption (end-to-end test renders the mix)
+- [~] DAVE receive spike: per-user Opus → PCM in memory → RMS → `voice.level` 10 Hz; blips on the Scope (needs Discord)
+- [~] Auto-join / auto-leave (decision logic unit-tested; needs Discord)
+- [~] Reconnection with 1–30 s backoff and a specific 4017/DAVE error (needs a Wi-Fi toggle test)
 
 ## P2: Console v1
 
-- [ ] Visual system, console layout, the Scope
-- [ ] Panels: scenes, layers, now playing, soundboard, health; shortcuts
-- [ ] Scenes with manual track lists
-- [ ] WebSocket state + REST actions
-- [ ] Playwright smoke + axe
+- [x] Visual system (§12.3 tokens, self-hosted fonts), console layout, the Scope (frame, notch tension gauge, rings, chevrons, blips, callouts, level meter, microtext)
+- [x] Panels: scenes (with live score bars), layers, now playing/queue, game, transcript, event log, soundboard, health lamps; keyboard shortcuts (§12.9)
+- [x] Scenes with explicit track lists (play even before the library is scanned)
+- [x] WebSocket live state; REST actions (§13)
+- [x] Playwright smoke tests and axe scans pass on every screen (`npm run test:e2e`)
+- [x] CRT toggles and reduced motion; usable at 1024 × 768 (scrolls)
+- [~] Ant runs a session entirely from the browser
 
 ## P3: Library and tagging
 

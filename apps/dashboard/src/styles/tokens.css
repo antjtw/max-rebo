@@ -8,7 +8,8 @@
 
   /* linework */
   --line: #ededed;
-  --line-dim: #6b6b70;
+  --line-dim: #6b6b70; /* decoration and borders only */
+  --line-mid: #a3a3a9; /* secondary text: AA at 12 px on every surface */
   --line-faint: #2a2a2e;
   --line-glow: rgba(255, 255, 255, 0.35);
 
